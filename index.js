@@ -3,6 +3,7 @@ const Router = require("koa-router");
 const logger = require("koa-logger");
 const bodyParser = require("koa-bodyparser");
 const fs = require("fs");
+const request = require('request')
 const path = require("path");
 const { init: initDB, Counter } = require("./db");
 
@@ -48,6 +49,19 @@ router.get("/api/wx_openid", async (ctx) => {
   if (ctx.request.headers["x-wx-source"]) {
     ctx.body = ctx.request.headers["x-wx-openid"];
   }
+});
+
+router.get("/api/fastregisterbetaweapp", async (ctx) => {
+  const data = await request({
+    method: 'POST',
+    url: 'http://api.weixin.qq.com//wxa/component/fastregisterbetaweapp',
+    body: JSON.stringify({
+      openid: ctx.request.headers["x-wx-openid"],
+      name: 'test',
+    })
+  })
+  console.log(JSON.parse(data))
+  ctx.body = JSON.parse(data)
 });
 
 const app = new Koa();
